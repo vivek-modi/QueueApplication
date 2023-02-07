@@ -16,8 +16,7 @@ import kotlinx.coroutines.withContext
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
-    val viewModel: QueueViewModel by viewModels()
-    var PERMISSION_ALL = 1;
+    private val viewModel: QueueViewModel by viewModels()
 
     @RequiresApi(Build.VERSION_CODES.S)
     val permissionList = arrayOf(
@@ -47,8 +46,9 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.S)
     override fun onResume() {
         super.onResume()
-        ActivityCompat.requestPermissions(this, permissionList, PERMISSION_ALL)
+        ActivityCompat.requestPermissions(this, permissionList, 1)
     }
 }
