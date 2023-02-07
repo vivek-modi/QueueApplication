@@ -1,8 +1,10 @@
 package com.example.queueapplication
 
 import android.Manifest
+import android.os.Build
 import android.os.Bundle
 import androidx.activity.viewModels
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.lifecycle.lifecycleScope
@@ -16,6 +18,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     val viewModel: QueueViewModel by viewModels()
     var PERMISSION_ALL = 1;
+
+    @RequiresApi(Build.VERSION_CODES.S)
     val permissionList = arrayOf(
         Manifest.permission.BLUETOOTH,
         Manifest.permission.BLUETOOTH_ADMIN,
@@ -35,7 +39,7 @@ class MainActivity : AppCompatActivity() {
             }
         }
         lifecycleScope.launchWhenResumed {
-            viewModel.bloodpressureChannel.consumeAsFlow().collect { measurement ->
+            viewModel.bloodPressureChannel.consumeAsFlow().collect { measurement ->
                 withContext(Dispatchers.Main) {
                     logW("onCharacteristicChanged ->>> $measurement")
                 }

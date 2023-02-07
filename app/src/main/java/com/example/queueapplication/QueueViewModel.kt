@@ -23,7 +23,7 @@ import kotlinx.coroutines.launch
 import java.nio.charset.StandardCharsets
 import java.util.*
 
-class QueueViewModel(application: Application) : AndroidViewModel(application) {
+class QueueViewModel(private val application: Application) : AndroidViewModel(application) {
 
     companion object {
         const val TAG = "Queue Logs"
@@ -42,10 +42,9 @@ class QueueViewModel(application: Application) : AndroidViewModel(application) {
             BluetoothManager::class.java
         ) as BluetoothManager
     }
-    val bluetoothAdapter: BluetoothAdapter by lazy { bluetoothManager.adapter }
+    private val bluetoothAdapter: BluetoothAdapter by lazy { bluetoothManager.adapter }
     private var bluetoothLeScanner = bluetoothAdapter.bluetoothLeScanner
-    val bloodpressureChannel = Channel<BloodPressureMeasurement>(Channel.UNLIMITED)
-    val context = application.applicationContext
+    val bloodPressureChannel = Channel<BloodPressureMeasurement>(Channel.UNLIMITED)
     internal val bluetoothGattCallback = object : BluetoothGattCallback() {
         @SuppressLint("MissingPermission")
         override fun onConnectionStateChange(gatt: BluetoothGatt?, status: Int, newState: Int) {
@@ -124,7 +123,7 @@ class QueueViewModel(application: Application) : AndroidViewModel(application) {
         ) {
             viewModelScope.launch {
                 addItemToQueue {
-                    bloodpressureChannel.trySend(BloodPressureMeasurement.fromBytes(value))
+                    bloodPressureChannel.trySend(BloodPressureMeasurement.fromBytes(value))
                 }
             }
         }
@@ -150,6 +149,7 @@ class QueueViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     private fun registerBondingBroadcastReceivers() {
+        val context = application.applicationContext
         context.registerReceiver(
             bondStateReceiver,
             IntentFilter(BluetoothDevice.ACTION_BOND_STATE_CHANGED)
