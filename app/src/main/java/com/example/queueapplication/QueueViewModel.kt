@@ -92,11 +92,7 @@ class QueueViewModel(application: Application) : AndroidViewModel(application) {
                         UUID.fromString("00002A35-0000-1000-8000-00805f9b34fb")
                     )?.let { characteristic ->
                         addItemToQueue {
-                            val descriptor =
-                                characteristic.getDescriptor(UUID.fromString("00002902-0000-1000-8000-00805f9b34fb"))
                             bluetoothGatt?.setCharacteristicNotification(characteristic, true)
-                            descriptor.value = BluetoothGattDescriptor.ENABLE_INDICATION_VALUE
-                            bluetoothGatt?.writeDescriptor(descriptor)
                         }
                     }
                 }
@@ -127,6 +123,23 @@ class QueueViewModel(application: Application) : AndroidViewModel(application) {
                     logW("onCharacteristicChanged ->>> $measurement")
                 }
             }
+        }
+
+        override fun onDescriptorRead(
+            gatt: BluetoothGatt,
+            descriptor: BluetoothGattDescriptor,
+            status: Int,
+            value: ByteArray
+        ) {
+            logE(">> Calling on onDescriptorRead")
+        }
+
+        override fun onDescriptorWrite(
+            gatt: BluetoothGatt?,
+            descriptor: BluetoothGattDescriptor?,
+            status: Int
+        ) {
+            logE(">> Calling on onDescriptorWrite")
         }
     }
     private val defaultScanCallback: ScanCallback = object : ScanCallback() {
