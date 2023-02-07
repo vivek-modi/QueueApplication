@@ -216,7 +216,7 @@ class QueueViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-    internal fun scanFilters(): MutableList<ScanFilter> {
+    private fun scanFilters(): MutableList<ScanFilter> {
         val scanFilterList = mutableListOf<ScanFilter>()
         val parcelUuidMask = ParcelUuid.fromString(UUID_MASK_STRING)
         val listItem = listOf(BLUETOOTH_PRESSURE_128_STRING)
