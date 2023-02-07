@@ -67,7 +67,7 @@ class QueueViewModel(private val application: Application) : AndroidViewModel(ap
                         gatt?.close()
                     }
                     else -> { // Note the block
-                        logE("UNKNOWN PROFILE: ${newState}")
+                        logE("UNKNOWN PROFILE: $newState")
                     }
                 }
             } else {
