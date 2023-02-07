@@ -17,6 +17,7 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.launch
 import java.nio.charset.StandardCharsets
@@ -26,6 +27,8 @@ class QueueViewModel(application: Application) : AndroidViewModel(application) {
 
     companion object {
         const val TAG = "Queue Logs"
+        private const val SCAN_START_DELAY = 1000L
+        private const val DIRECT_CONNECTION_DELAY_IN_MS = 100L
         private const val UUID_MASK_STRING = "FFFFFFFF-FFFF-FFFF-FFFF-FFFFFFFFFFFF"
         private const val BLUETOOTH_PRESSURE_128_STRING = "00001810-0000-1000-8000-00805f9b34fb"
     }
@@ -134,7 +137,10 @@ class QueueViewModel(application: Application) : AndroidViewModel(application) {
                 return
 
             registerBondingBroadcastReceivers()
-            bluetoothGatt = result.device.connectGatt(application, false, bluetoothGattCallback)
+            viewModelScope.launch {
+                delay(DIRECT_CONNECTION_DELAY_IN_MS)
+                bluetoothGatt = result.device.connectGatt(application, false, bluetoothGattCallback)
+            }
         }
 
         override fun onScanFailed(errorCode: Int) {
@@ -205,6 +211,7 @@ class QueueViewModel(application: Application) : AndroidViewModel(application) {
     @SuppressLint("MissingPermission")
     fun startScan() {
         viewModelScope.launch {
+            delay(SCAN_START_DELAY)
             bluetoothLeScanner?.startScan(
                 scanFilters(),
                 ScanSettings.Builder().setScanMode(ScanSettings.SCAN_MODE_LOW_POWER).build(),
