@@ -112,10 +112,6 @@ class QueueViewModel(private val application: Application) : AndroidViewModel(ap
             logE("CharacteristicRead ->>> ${String(value, StandardCharsets.ISO_8859_1)}")
         }
 
-        override fun onMtuChanged(gatt: BluetoothGatt, mtu: Int, status: Int) {
-            logE(">> BluetoothGattCallback ATT MTU changed to $mtu, success: ${status == BluetoothGatt.GATT_SUCCESS}")
-        }
-
         override fun onCharacteristicChanged(
             gatt: BluetoothGatt,
             characteristic: BluetoothGattCharacteristic,
