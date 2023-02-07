@@ -16,6 +16,7 @@ import android.util.Log
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.launch
 import java.nio.charset.StandardCharsets
@@ -40,6 +41,7 @@ class QueueViewModel(application: Application) : AndroidViewModel(application) {
     }
     val bluetoothAdapter: BluetoothAdapter by lazy { bluetoothManager.adapter }
     private var bluetoothLeScanner = bluetoothAdapter.bluetoothLeScanner
+    val bloodpressureChannel = Channel<BloodPressureMeasurement>(Channel.UNLIMITED)
     val context = application.applicationContext
     internal val bluetoothGattCallback = object : BluetoothGattCallback() {
         @SuppressLint("MissingPermission")
@@ -119,27 +121,9 @@ class QueueViewModel(application: Application) : AndroidViewModel(application) {
         ) {
             viewModelScope.launch {
                 addItemToQueue {
-                    val measurement = BloodPressureMeasurement.fromBytes(value)
-                    logW("onCharacteristicChanged ->>> $measurement")
+                    bloodpressureChannel.trySend(BloodPressureMeasurement.fromBytes(value))
                 }
             }
-        }
-
-        override fun onDescriptorRead(
-            gatt: BluetoothGatt,
-            descriptor: BluetoothGattDescriptor,
-            status: Int,
-            value: ByteArray
-        ) {
-            logE(">> Calling on onDescriptorRead")
-        }
-
-        override fun onDescriptorWrite(
-            gatt: BluetoothGatt?,
-            descriptor: BluetoothGattDescriptor?,
-            status: Int
-        ) {
-            logE(">> Calling on onDescriptorWrite")
         }
     }
     private val defaultScanCallback: ScanCallback = object : ScanCallback() {

@@ -7,6 +7,9 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.lifecycle.lifecycleScope
 import com.example.queueapplication.databinding.ActivityMainBinding
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.consumeAsFlow
+import kotlinx.coroutines.withContext
 
 class MainActivity : AppCompatActivity() {
 
@@ -31,7 +34,13 @@ class MainActivity : AppCompatActivity() {
                 viewModel.startScan()
             }
         }
-
+        lifecycleScope.launchWhenResumed {
+            viewModel.bloodpressureChannel.consumeAsFlow().collect { measurement ->
+                withContext(Dispatchers.Main) {
+                    logW("onCharacteristicChanged ->>> $measurement")
+                }
+            }
+        }
     }
 
     override fun onResume() {
