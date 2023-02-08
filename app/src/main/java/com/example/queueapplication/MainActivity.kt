@@ -17,6 +17,7 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
     private val viewModel: QueueViewModel by viewModels()
+    private val RECORD_REQUEST_CODE = 101
 
     @RequiresApi(Build.VERSION_CODES.S)
     val permissionList = arrayOf(
@@ -28,10 +29,16 @@ class MainActivity : AppCompatActivity() {
         Manifest.permission.ACCESS_FINE_LOCATION
     )
 
+    @RequiresApi(Build.VERSION_CODES.S)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+//        makeRequest()
+        startWorking()
+    }
+
+    private fun startWorking() {
         lifecycleScope.launchWhenCreated {
             viewModel.addItemToQueue {
                 viewModel.startScan()
@@ -47,8 +54,9 @@ class MainActivity : AppCompatActivity() {
     }
 
     @RequiresApi(Build.VERSION_CODES.S)
-    override fun onResume() {
-        super.onResume()
-        ActivityCompat.requestPermissions(this, permissionList, 1)
+    private fun makeRequest() {
+        ActivityCompat.requestPermissions(
+            this, permissionList, RECORD_REQUEST_CODE
+        )
     }
 }
