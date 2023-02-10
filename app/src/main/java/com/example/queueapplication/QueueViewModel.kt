@@ -12,28 +12,23 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.os.ParcelUuid
-import android.util.Log
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.launch
 import java.nio.charset.StandardCharsets
 import java.util.*
 
 class QueueViewModel(private val application: Application) : AndroidViewModel(application) {
 
     companion object {
-        const val TAG = "Queue Logs"
         private const val SCAN_START_DELAY = 1000L
         private const val DIRECT_CONNECTION_DELAY_IN_MS = 100L
         private const val UUID_MASK_STRING = "FFFFFFFF-FFFF-FFFF-FFFF-FFFFFFFFFFFF"
         private const val BLUETOOTH_PRESSURE_128_STRING = "00001810-0000-1000-8000-00805f9b34fb"
     }
 
-    private val commandFlow = MutableSharedFlow<(input: String) -> Unit>()
     private val deviceSet = HashSet<ScanResult>()
     private var bluetoothGatt: BluetoothGatt? = null
     private val bluetoothManager: BluetoothManager by lazy {
@@ -45,6 +40,9 @@ class QueueViewModel(private val application: Application) : AndroidViewModel(ap
     private val bluetoothAdapter: BluetoothAdapter by lazy { bluetoothManager.adapter }
     private var bluetoothLeScanner = bluetoothAdapter.bluetoothLeScanner
     val bloodPressureChannel = Channel<BloodPressureMeasurement>(Channel.UNLIMITED)
+    private var channel: Channel<Boolean> = Channel()
+
+    @OptIn(DelicateCoroutinesApi::class)
     internal val bluetoothGattCallback = object : BluetoothGattCallback() {
         @SuppressLint("MissingPermission")
         override fun onConnectionStateChange(gatt: BluetoothGatt?, status: Int, newState: Int) {
@@ -55,11 +53,8 @@ class QueueViewModel(private val application: Application) : AndroidViewModel(ap
                         // After calling bluetoothGatt?.discoverServices()
                         // the outcome of service discovery will be delivered via BluetoothGattCallback’s onServicesDiscovered() method
                         logE(">> Successfully connected to $deviceAddress")
-
                         viewModelScope.launch {
-                            addItemToQueue {
-                                bluetoothGatt?.discoverServices()
-                            }
+                            bluetoothGatt?.discoverServices()
                         }
                     }
                     BluetoothProfile.STATE_DISCONNECTED -> {
@@ -78,29 +73,41 @@ class QueueViewModel(private val application: Application) : AndroidViewModel(ap
 
         @SuppressLint("MissingPermission")
         override fun onServicesDiscovered(gatt: BluetoothGatt, status: Int) {
-            with(gatt) {
-                logE(">> BluetoothGattCallback Discovered ${services.size} services for ${device.address}")
-                viewModelScope.launch {
-                    getCharacteristic(
-                        UUID.fromString("0000180A-0000-1000-8000-00805f9b34fb"),
-                        UUID.fromString("00002A29-0000-1000-8000-00805f9b34fb")
-                    )?.let { readCharacteristic ->
-                        addItemToQueue {
-                            bluetoothGatt?.readCharacteristic(readCharacteristic)
-                        }
-                    }
-                }
-                viewModelScope.launch {
-                    getCharacteristic(
-                        UUID.fromString("00001810-0000-1000-8000-00805f9b34fb"),
-                        UUID.fromString("00002A35-0000-1000-8000-00805f9b34fb")
-                    )?.let { characteristic ->
-                        addItemToQueue {
-                            bluetoothGatt?.setCharacteristicNotification(characteristic, true)
-                        }
-                    }
-                }
+            logE(">> BluetoothGattCallback Discovered ${gatt.services.size} services for ${gatt.device.address}")
+
+//            GlobalScope.async {
+//                readDeviceName()
+//            }
+            GlobalScope.async {
+                enableNotification(gatt)
             }
+        }
+
+        @SuppressLint("MissingPermission")
+        private suspend fun readDeviceName() {
+            getCharacteristic(
+                UUID.fromString("0000180A-0000-1000-8000-00805f9b34fb"),
+                UUID.fromString("00002A29-0000-1000-8000-00805f9b34fb")
+            )?.let { readCharacteristic ->
+                bluetoothGatt?.readCharacteristic(readCharacteristic)
+            }
+            channel.receive()
+        }
+
+        @SuppressLint("MissingPermission")
+        private suspend fun enableNotification(gatt: BluetoothGatt) {
+            getCharacteristic(
+                UUID.fromString("00001810-0000-1000-8000-00805f9b34fb"),
+                UUID.fromString("00002A35-0000-1000-8000-00805f9b34fb")
+            )?.let { characteristic ->
+                gatt.setCharacteristicNotification(characteristic, true)
+                val descriptor =
+                    characteristic.getDescriptor(UUID.fromString("00002902-0000-1000-8000-00805f9b34fb"))
+                descriptor.value = BluetoothGattDescriptor.ENABLE_INDICATION_VALUE
+                val returnvalue = gatt.writeDescriptor(descriptor)
+                logE("returnvalue $returnvalue")
+            }
+            channel.receive()
         }
 
         override fun onCharacteristicRead(
@@ -109,7 +116,10 @@ class QueueViewModel(private val application: Application) : AndroidViewModel(ap
             value: ByteArray,
             status: Int
         ) {
-            logE("CharacteristicRead ->>> ${String(value, StandardCharsets.ISO_8859_1)}")
+            GlobalScope.async {
+                channel.send(true)
+                logE("CharacteristicRead ->>> ${String(value, StandardCharsets.ISO_8859_1)}")
+            }
         }
 
         override fun onCharacteristicChanged(
@@ -118,12 +128,21 @@ class QueueViewModel(private val application: Application) : AndroidViewModel(ap
             value: ByteArray
         ) {
             viewModelScope.launch {
-                addItemToQueue {
-                    bloodPressureChannel.trySend(BloodPressureMeasurement.fromBytes(value))
-                }
+                bloodPressureChannel.trySend(BloodPressureMeasurement.fromBytes(value))
+            }
+        }
+
+        override fun onDescriptorWrite(
+            gatt: BluetoothGatt,
+            descriptor: BluetoothGattDescriptor,
+            status: Int
+        ) {
+            GlobalScope.async {
+                channel.send(true)
             }
         }
     }
+
     private val defaultScanCallback: ScanCallback = object : ScanCallback() {
         @SuppressLint("MissingPermission")
         override fun onScanResult(callbackType: Int, result: ScanResult) {
@@ -183,24 +202,6 @@ class QueueViewModel(private val application: Application) : AndroidViewModel(ap
 
             logE("pairing request received: $variant")
 
-        }
-    }
-
-    init {
-        setupQueuePolling()
-    }
-
-    suspend fun addItemToQueue(item: (input: String) -> Unit) {
-        Log.e(TAG, "Added Item ->> $item")
-        commandFlow.emit(item)
-    }
-
-    private fun setupQueuePolling() {
-        viewModelScope.launch {
-            Log.e(TAG, "Starting Polling")
-            commandFlow.collect { item ->
-                item("This is input")
-            }
         }
     }
 

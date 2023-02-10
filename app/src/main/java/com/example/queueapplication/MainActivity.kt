@@ -40,9 +40,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun startWorking() {
         lifecycleScope.launchWhenCreated {
-            viewModel.addItemToQueue {
-                viewModel.startScan()
-            }
+            viewModel.startScan()
         }
         lifecycleScope.launchWhenResumed {
             viewModel.bloodPressureChannel.consumeAsFlow().collect { measurement ->
