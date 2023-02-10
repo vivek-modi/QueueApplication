@@ -78,8 +78,11 @@ class QueueViewModel(private val application: Application) : AndroidViewModel(ap
 //            GlobalScope.async {
 //                readDeviceName()
 //            }
-            GlobalScope.async {
-                enableNotification(gatt)
+
+            viewModelScope.launch {
+                withContext(Dispatchers.IO) {
+                    enableNotification(gatt)
+                }
             }
         }
 
@@ -137,8 +140,10 @@ class QueueViewModel(private val application: Application) : AndroidViewModel(ap
             descriptor: BluetoothGattDescriptor,
             status: Int
         ) {
-            GlobalScope.async {
-                channel.send(true)
+            viewModelScope.launch {
+                withContext(Dispatchers.IO) {
+                    channel.send(true)
+                }
             }
         }
     }
