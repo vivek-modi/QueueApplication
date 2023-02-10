@@ -17,14 +17,8 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.flowOn
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
 import java.nio.charset.StandardCharsets
 import java.util.*
-import kotlin.coroutines.CoroutineContext
-import kotlin.coroutines.EmptyCoroutineContext
 
 class QueueViewModel(private val application: Application) : AndroidViewModel(application) {
 
@@ -46,20 +40,6 @@ class QueueViewModel(private val application: Application) : AndroidViewModel(ap
     private val bluetoothAdapter: BluetoothAdapter by lazy { bluetoothManager.adapter }
     private var bluetoothLeScanner = bluetoothAdapter.bluetoothLeScanner
     val bloodPressureChannel = Channel<BloodPressureMeasurement>(Channel.UNLIMITED)
-    private val queueMutableSharedFlow = MutableSharedFlow<Job>(extraBufferCapacity = Int.MAX_VALUE)
-
-    init {
-        queueMutableSharedFlow.onEach { it.join() }
-            .flowOn(Dispatchers.Default)
-            .launchIn(viewModelScope)
-    }
-
-    fun submit(
-        context: CoroutineContext = EmptyCoroutineContext,
-        block: suspend CoroutineScope.() -> Unit
-    ) {
-        queueMutableSharedFlow.tryEmit(viewModelScope.launch(context, CoroutineStart.LAZY, block))
-    }
 
     internal val bluetoothGattCallback = object : BluetoothGattCallback() {
         @SuppressLint("MissingPermission")
@@ -93,17 +73,17 @@ class QueueViewModel(private val application: Application) : AndroidViewModel(ap
         override fun onServicesDiscovered(gatt: BluetoothGatt, status: Int) {
             logE(">> BluetoothGattCallback Discovered ${gatt.services.size} services for ${gatt.device.address}")
 
-            submit {
+            viewModelScope.launch {
                 withContext(Dispatchers.IO) {
                     enableNotification(gatt)
                 }
             }
 
-            submit {
-                withContext(Dispatchers.IO) {
-                    readDeviceName()
-                }
-            }
+//            submit {
+//                withContext(Dispatchers.IO) {
+//                    readDeviceName()
+//                }
+//            }
         }
 
         @SuppressLint("MissingPermission")
