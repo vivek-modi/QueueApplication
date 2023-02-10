@@ -42,7 +42,6 @@ class QueueViewModel(private val application: Application) : AndroidViewModel(ap
     val bloodPressureChannel = Channel<BloodPressureMeasurement>(Channel.UNLIMITED)
     private var channel: Channel<Boolean> = Channel()
 
-    @OptIn(DelicateCoroutinesApi::class)
     internal val bluetoothGattCallback = object : BluetoothGattCallback() {
         @SuppressLint("MissingPermission")
         override fun onConnectionStateChange(gatt: BluetoothGatt?, status: Int, newState: Int) {
@@ -75,9 +74,11 @@ class QueueViewModel(private val application: Application) : AndroidViewModel(ap
         override fun onServicesDiscovered(gatt: BluetoothGatt, status: Int) {
             logE(">> BluetoothGattCallback Discovered ${gatt.services.size} services for ${gatt.device.address}")
 
-//            GlobalScope.async {
-//                readDeviceName()
-//            }
+            viewModelScope.launch {
+                withContext(Dispatchers.IO) {
+                    readDeviceName()
+                }
+            }
 
             viewModelScope.launch {
                 withContext(Dispatchers.IO) {
@@ -119,9 +120,11 @@ class QueueViewModel(private val application: Application) : AndroidViewModel(ap
             value: ByteArray,
             status: Int
         ) {
-            GlobalScope.async {
-                channel.send(true)
-                logE("CharacteristicRead ->>> ${String(value, StandardCharsets.ISO_8859_1)}")
+            viewModelScope.launch {
+                withContext(Dispatchers.IO) {
+                    channel.send(true)
+                    logE("CharacteristicRead ->>> ${String(value, StandardCharsets.ISO_8859_1)}")
+                }
             }
         }
 
@@ -189,7 +192,8 @@ class QueueViewModel(private val application: Application) : AndroidViewModel(ap
             // Ignore updates for other devices
             if (!receivedDevice.address.equals(receivedDevice.address, ignoreCase = true)) return
             if (action == BluetoothDevice.ACTION_BOND_STATE_CHANGED) {
-                val bondState = intent.getIntExtra(BluetoothDevice.EXTRA_BOND_STATE, BluetoothDevice.ERROR)
+                val bondState =
+                    intent.getIntExtra(BluetoothDevice.EXTRA_BOND_STATE, BluetoothDevice.ERROR)
                 val previousBondState =
                     intent.getIntExtra(BluetoothDevice.EXTRA_PREVIOUS_BOND_STATE, BluetoothDevice.ERROR)
                 logE("handleBondStateChange --- $bondState ----$previousBondState")
@@ -213,12 +217,14 @@ class QueueViewModel(private val application: Application) : AndroidViewModel(ap
     @SuppressLint("MissingPermission")
     fun startScan() {
         viewModelScope.launch {
-            delay(SCAN_START_DELAY)
-            bluetoothLeScanner?.startScan(
-                scanFilters(),
-                ScanSettings.Builder().setScanMode(ScanSettings.SCAN_MODE_LOW_POWER).build(),
-                defaultScanCallback
-            )
+            withContext(Dispatchers.IO) {
+                delay(SCAN_START_DELAY)
+                bluetoothLeScanner?.startScan(
+                    scanFilters(),
+                    ScanSettings.Builder().setScanMode(ScanSettings.SCAN_MODE_LOW_POWER).build(),
+                    defaultScanCallback
+                )
+            }
         }
     }
 
