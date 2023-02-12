@@ -29,13 +29,13 @@ fun DrawProgressBar() {
             modifier = Modifier.fillMaxSize()
         ) {
             val strokeWidth = 8.dp
-            val width = size.width
-            val height = size.height
+            val canvasWidth = size.width
+            val canvasHeight = size.height
             val strokeWidthPx = density.run { strokeWidth.toPx() }
             rangeComposition.initialiseList()
             drawLine(
-                start = Offset(x = 0f, y = height / 2),
-                end = Offset(x = width, y = height / 2),
+                start = Offset(x = 0f, y = canvasHeight / 2),
+                end = Offset(x = canvasWidth, y = canvasHeight / 2),
                 color = Color.Black,
                 strokeWidth = strokeWidthPx,
             )
