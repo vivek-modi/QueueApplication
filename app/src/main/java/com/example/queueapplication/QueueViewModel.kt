@@ -223,4 +223,13 @@ class QueueViewModel(private val application: Application) : AndroidViewModel(ap
     fun getCharacteristic(serviceUUID: UUID, characteristicUUID: UUID): BluetoothGattCharacteristic? {
         return bluetoothGatt?.getService(serviceUUID)?.getCharacteristic(characteristicUUID)
     }
+
+    private fun rangeValues() {
+        val lowRange = Pair(89, 59) // Less than 90 & Less than 60
+        val normalRange = Pair(Pair(90, 119), Pair(60, 79)) // 90 - 119 & 60 - 80
+        val elevatedRange = Pair(Pair(120, 129), 79) // 120 - 129 & Less than 80
+        val highRange = Pair(Pair(130, 139), Pair(80, 89)) // 130 - 139 or 80 - 89
+        val veryHighRange = Pair(Pair(140, 179), Pair(90, 119)) // 140 or higher or 90 or higher
+        val extremelyHighRange = Pair(180, 120) // 180 or higher or 120 or higher
+    }
 }
