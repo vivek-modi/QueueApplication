@@ -32,7 +32,6 @@ fun DrawProgressBar() {
             val canvasWidth = size.width
             val canvasHeight = size.height
             val strokeWidthPx = density.run { strokeWidth.toPx() }
-            rangeComposition.initialiseList()
             drawLine(
                 start = Offset(x = 0f, y = canvasHeight / 2),
                 end = Offset(x = canvasWidth, y = canvasHeight / 2),
@@ -40,12 +39,11 @@ fun DrawProgressBar() {
                 strokeWidth = strokeWidthPx,
             )
             itemLst.forEachIndexed { index, rangeItem ->
-                val endPointInFloat = rangeItem.endPoint
-                activity.logE("name ${rangeItem.name} --++-- startPoint ${rangeItem.startPoint} --++-- endPoint ${rangeItem.endPoint} ")
+                val endPointInPixel = (rangeItem.endPoint / 100f) * canvasWidth
                 if (index != itemLst.lastIndex) {
                     drawLine(
-                        start = Offset(x = endPointInFloat, y = 0F),
-                        end = Offset(x = endPointInFloat, y = boxSize.toPx()),
+                        start = Offset(x = endPointInPixel, y = 0F),
+                        end = Offset(x = endPointInPixel, y = boxSize.toPx()),
                         color = Color.Black,
                         strokeWidth = 4.dp.toPx(),
                     )
