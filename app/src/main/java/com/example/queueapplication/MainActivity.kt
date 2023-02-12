@@ -3,19 +3,20 @@ package com.example.queueapplication
 import android.Manifest
 import android.os.Build
 import android.os.Bundle
+import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.material3.Text
+import androidx.compose.ui.graphics.Color
 import androidx.core.app.ActivityCompat
 import androidx.lifecycle.lifecycleScope
-import com.example.queueapplication.databinding.ActivityMainBinding
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.consumeAsFlow
 import kotlinx.coroutines.withContext
 
 class MainActivity : AppCompatActivity() {
 
-    private lateinit var binding: ActivityMainBinding
     private val viewModel: QueueViewModel by viewModels()
     private val RECORD_REQUEST_CODE = 101
 
@@ -32,10 +33,14 @@ class MainActivity : AppCompatActivity() {
     @RequiresApi(Build.VERSION_CODES.S)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityMainBinding.inflate(layoutInflater)
-        setContentView(binding.root)
 //        makeRequest()
         startWorking()
+
+        setContent {
+            Theme {
+                Text(text = "Hi", color = Color.White)
+            }
+        }
     }
 
     private fun startWorking() {
