@@ -3,7 +3,8 @@ package com.example.queueapplication
 class RangeComposition {
     var bpExplained = mutableListOf<BpRange>()
 
-    init {
+    fun initialiseList(widthSizeInFloat: Float) {
+        logE("Pixel in size $widthSizeInFloat")
         bpExplained.addAll(
             listOf(
                 BpRange(
@@ -12,9 +13,9 @@ class RangeComposition {
                     "and",
                     "Less than 90",
                     "Consult your healthcare provider",
-                    (100 / 12f) + (100 / 6 * 0),
-                    (100 / 6F) * 0,
-                    (100 / 6F) * 1,
+                    (widthSizeInFloat / 12f) + (widthSizeInFloat / 6 * 0),
+                    (widthSizeInFloat / 6F) * 0,
+                    (widthSizeInFloat / 6F) * 1,
                 ) { sys, dia ->
                     (sys < 90 && dia < 60)
                 },
@@ -24,9 +25,9 @@ class RangeComposition {
                     "and",
                     "60-79",
                     "Normal blood pressure",
-                    (100 / 12f) + (100 / 6 * 1),
-                    (100 / 6F) * 1,
-                    (100 / 6F) * 2,
+                    (widthSizeInFloat / 12f) + (widthSizeInFloat / 6 * 1),
+                    (widthSizeInFloat / 6F) * 1,
+                    (widthSizeInFloat / 6F) * 2,
                 ) { sys, dia ->
                     ((sys in 90..119) && (dia in 60..80))
                 },
@@ -36,9 +37,9 @@ class RangeComposition {
                     "and",
                     "Less than 80",
                     "Share this result with your healthcare provide",
-                    (100 / 12f) + (100 / 6 * 2),
-                    (100 / 6F) * 2,
-                    (100 / 6F) * 3,
+                    (widthSizeInFloat / 12f) + (widthSizeInFloat / 6 * 2),
+                    (widthSizeInFloat / 6F) * 2,
+                    (widthSizeInFloat / 6F) * 3,
                 ) { sys, dia ->
                     ((sys in 120..129) && (dia < 80))
                 },
@@ -48,9 +49,9 @@ class RangeComposition {
                     "or",
                     "80-89",
                     "Share this result with your healthcare provide",
-                    (100 / 12f) + (100 / 6 * 3),
-                    (100 / 6F) * 3,
-                    (100 / 6F) * 4,
+                    (widthSizeInFloat / 12f) + (widthSizeInFloat / 6 * 3),
+                    (widthSizeInFloat / 6F) * 3,
+                    (widthSizeInFloat / 6F) * 4,
                 ) { sys, dia ->
                     ((sys in 130..139) || (dia in 80..89))
                 },
@@ -60,9 +61,9 @@ class RangeComposition {
                     "or",
                     "90 or higher",
                     "Consult your healthcare provider immediately",
-                    (100 / 12f) + (100 / 6 * 4),
-                    (100 / 6F) * 4,
-                    (100 / 6F) * 5,
+                    (widthSizeInFloat / 12f) + (widthSizeInFloat / 6 * 4),
+                    (widthSizeInFloat / 6F) * 4,
+                    (widthSizeInFloat / 6F) * 5,
                 ) { sys, dia ->
                     ((sys in 140..179) || (dia in 90..119))
                 },
@@ -72,9 +73,9 @@ class RangeComposition {
                     "and/or",
                     "120 or higher",
                     "Seek immediate medical",
-                    (100 / 12f) + (100 / 6 * 5),
-                    (100 / 6F) * 5,
-                    (100 / 6F) * 6,
+                    (widthSizeInFloat / 12f) + (widthSizeInFloat / 6 * 5),
+                    (widthSizeInFloat / 6F) * 5,
+                    (widthSizeInFloat / 6F) * 6,
                 ) { sys, dia ->
                     ((sys >= 180) || (dia >= 120))
                 },

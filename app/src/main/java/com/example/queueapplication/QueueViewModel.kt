@@ -40,7 +40,6 @@ class QueueViewModel(private val application: Application) : AndroidViewModel(ap
     private val bluetoothAdapter: BluetoothAdapter by lazy { bluetoothManager.adapter }
     private var bluetoothLeScanner = bluetoothAdapter.bluetoothLeScanner
     val bloodPressureChannel = Channel<BloodPressureMeasurement>(Channel.UNLIMITED)
-
     internal val bluetoothGattCallback = object : BluetoothGattCallback() {
         @SuppressLint("MissingPermission")
         override fun onConnectionStateChange(gatt: BluetoothGatt?, status: Int, newState: Int) {
@@ -222,32 +221,5 @@ class QueueViewModel(private val application: Application) : AndroidViewModel(ap
 
     fun getCharacteristic(serviceUUID: UUID, characteristicUUID: UUID): BluetoothGattCharacteristic? {
         return bluetoothGatt?.getService(serviceUUID)?.getCharacteristic(characteristicUUID)
-    }
-
-    fun setupRange() {
-        val rangeComposition = RangeComposition()
-        val findReadingList = listOf(
-            Pair(89, 59),
-
-            Pair(90, 60),
-            Pair(119, 80),
-
-            Pair(120, 79),
-            Pair(129, 79),
-
-            Pair(130, 80),
-            Pair(139, 89),
-
-            Pair(140, 90),
-            Pair(179, 119),
-
-            Pair(180, 120),
-            Pair(200, 200),
-        )
-        for (item in findReadingList) {
-            val (systolic, diastolic) = item
-            val result = rangeComposition.findReadingWithPointer(systolic, diastolic)
-            logE("systolic $systolic --+-- diastolic $diastolic --->> $result")
-        }
     }
 }
