@@ -1,6 +1,5 @@
 package com.example.queueapplication
 
-import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -10,19 +9,18 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 
 @Composable
 fun DrawProgressBar() {
-    val activity = LocalContext.current as AppCompatActivity
     val rangeComposition = RangeComposition()
     val itemLst = rangeComposition.bpExplained
     val boxSize = 30.dp
     Box(
         modifier = Modifier
-            .background(Color.LightGray)
+            .background(Color.White)
             .height(height = boxSize)
     ) {
         Canvas(
@@ -35,8 +33,9 @@ fun DrawProgressBar() {
             drawLine(
                 start = Offset(x = 0f, y = canvasHeight / 2),
                 end = Offset(x = canvasWidth, y = canvasHeight / 2),
-                color = Color.Black,
+                color = Color.Gray,
                 strokeWidth = strokeWidthPx,
+                cap = StrokeCap.Round,
             )
             itemLst.forEachIndexed { index, rangeItem ->
                 val endPointInPixel = (rangeItem.endPoint / 100f) * canvasWidth
