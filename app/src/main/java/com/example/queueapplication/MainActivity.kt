@@ -7,8 +7,16 @@ import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.material3.Text
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.LinearProgressIndicator
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.dp
 import androidx.core.app.ActivityCompat
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.Dispatchers
@@ -38,32 +46,21 @@ class MainActivity : AppCompatActivity() {
 
         setContent {
             Theme {
-                Text(text = "Hi", color = Color.White)
+                ColumnView()
             }
-            val rangeComposition = RangeComposition()
-            val findReadingList = listOf(
-                Pair(89, 59),
+        }
+    }
 
-                Pair(90, 60),
-                Pair(119, 80),
-
-                Pair(120, 79),
-                Pair(129, 79),
-
-                Pair(130, 80),
-                Pair(139, 89),
-
-                Pair(140, 90),
-                Pair(179, 119),
-
-                Pair(180, 120),
-                Pair(200, 200),
-            )
-            for (item in findReadingList) {
-                val (systolic, diastolic) = item
-                val result = rangeComposition.findReadingWithPointer(systolic, diastolic)
-                logE("systolic $systolic --+-- diastolic $diastolic --->> $result")
-            }
+    @Composable
+    fun ColumnView() {
+        Column(
+            Modifier
+                .fillMaxSize()
+                .background(Color.White)
+                .padding(16.dp),
+            verticalArrangement = Arrangement.Center
+        ) {
+            LinearProgressIndicator()
         }
     }
 
