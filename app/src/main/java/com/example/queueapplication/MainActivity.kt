@@ -40,6 +40,30 @@ class MainActivity : AppCompatActivity() {
             Theme {
                 Text(text = "Hi", color = Color.White)
             }
+            val rangeComposition = RangeComposition()
+            val findReadingList = listOf(
+                Pair(89, 59),
+
+                Pair(90, 60),
+                Pair(119, 80),
+
+                Pair(120, 79),
+                Pair(129, 79),
+
+                Pair(130, 80),
+                Pair(139, 89),
+
+                Pair(140, 90),
+                Pair(179, 119),
+
+                Pair(180, 120),
+                Pair(200, 200),
+            )
+            for (item in findReadingList) {
+                val (systolic, diastolic) = item
+                val result = rangeComposition.findReadingWithPointer(systolic, diastolic)
+                logE("systolic $systolic --+-- diastolic $diastolic --->> $result")
+            }
         }
     }
 
