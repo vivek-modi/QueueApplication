@@ -4,7 +4,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -26,16 +26,18 @@ fun DrawProgressBar() {
             .height(height = boxSize)
     ) {
         Canvas(
-            modifier = Modifier
-                .fillMaxWidth()
+            modifier = Modifier.fillMaxSize()
         ) {
-            val canvasWidth = size.width
-            rangeComposition.initialiseList(canvasWidth)
+            val strokeWidth = 8.dp
+            val width = size.width
+            val height = size.height
+            val strokeWidthPx = density.run { strokeWidth.toPx() }
+            rangeComposition.initialiseList()
             drawLine(
-                start = Offset(x = 0f, y = (boxSize / 2).toPx()),
-                end = Offset(x = canvasWidth, y = (boxSize / 2).toPx()),
+                start = Offset(x = 0f, y = height / 2),
+                end = Offset(x = width, y = height / 2),
                 color = Color.Black,
-                strokeWidth = 8.dp.toPx(),
+                strokeWidth = strokeWidthPx,
             )
             itemLst.forEachIndexed { index, rangeItem ->
                 val endPointInFloat = rangeItem.endPoint
