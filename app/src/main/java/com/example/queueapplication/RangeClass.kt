@@ -12,7 +12,7 @@ class RangeComposition {
                     "and",
                     "Less than 90",
                     "Consult your healthcare provider",
-                    (100 / 12f) + (100 / 6 * 0),
+                    (100 / 12f) * 1,
                     (100 / 6F) * 0,
                     (100 / 6F) * 1,
                 ) { sys, dia ->
@@ -24,7 +24,7 @@ class RangeComposition {
                     "and",
                     "60-79",
                     "Normal blood pressure",
-                    (100 / 12f) + (100 / 6 * 1),
+                    (100 / 12f) * 3,
                     (100 / 6F) * 1,
                     (100 / 6F) * 2,
                 ) { sys, dia ->
@@ -36,7 +36,7 @@ class RangeComposition {
                     "and",
                     "Less than 80",
                     "Share this result with your healthcare provide",
-                    (100 / 12f) + (100 / 6 * 2),
+                    (100 / 12f) * 5,
                     (100 / 6F) * 2,
                     (100 / 6F) * 3,
                 ) { sys, dia ->
@@ -48,7 +48,7 @@ class RangeComposition {
                     "or",
                     "80-89",
                     "Share this result with your healthcare provide",
-                    (100 / 12f) + (100 / 6 * 3),
+                    (100 / 12f) * 7,
                     (100 / 6F) * 3,
                     (100 / 6F) * 4,
                 ) { sys, dia ->
@@ -60,7 +60,7 @@ class RangeComposition {
                     "or",
                     "90 or higher",
                     "Consult your healthcare provider immediately",
-                    (100 / 12f) + (100 / 6 * 4),
+                    (100 / 12f) * 9,
                     (100 / 6F) * 4,
                     (100 / 6F) * 5,
                 ) { sys, dia ->
@@ -72,7 +72,7 @@ class RangeComposition {
                     "and/or",
                     "120 or higher",
                     "Seek immediate medical",
-                    (100 / 12f) + (100 / 6 * 5),
+                    (100 / 12F) * 11,
                     (100 / 6F) * 5,
                     (100 / 6F) * 6,
                 ) { sys, dia ->
