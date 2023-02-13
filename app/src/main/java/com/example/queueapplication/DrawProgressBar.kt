@@ -48,7 +48,7 @@ fun DrawProgressBar() {
             )
             val progressBarPointerInPixel = (progressBarPointer / 100f) * canvasWidth
             drawLine(
-                color = Color.Cyan,
+                color = Color.White,
                 start = Offset(x = progressBarPointerInPixel, y = canvasHeight / 2),
                 end = Offset(x = progressBarPointerInPixel + strokeWidthPx / 2, y = canvasHeight / 2),
                 strokeWidth = strokeWidthPx,
@@ -63,7 +63,7 @@ fun DrawProgressBar() {
             drawArc(
                 topLeft = Offset(x = progressBarPointerInPixel, y = canvasHeight / 2 - strokeWidthPx / 2),
                 size = Size(strokeWidthPx, strokeWidthPx),
-                color = Color.Cyan,
+                color = Color.White,
                 startAngle = -90f,
                 sweepAngle = 180f,
                 useCenter = true
