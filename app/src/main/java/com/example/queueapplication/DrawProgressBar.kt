@@ -48,11 +48,25 @@ fun DrawProgressBar() {
             )
             val progressBarPointerInPixel = (progressBarPointer / 100f) * canvasWidth
             drawLine(
+                color = Color.Cyan,
+                start = Offset(x = progressBarPointerInPixel, y = canvasHeight / 2),
+                end = Offset(x = progressBarPointerInPixel + strokeWidthPx / 2, y = canvasHeight / 2),
+                strokeWidth = strokeWidthPx,
+            )
+            drawLine(
                 brush = brush,
                 start = Offset(x = 0f, y = canvasHeight / 2),
                 end = Offset(x = progressBarPointerInPixel, y = canvasHeight / 2),
                 strokeWidth = strokeWidthPx,
                 cap = StrokeCap.Round,
+            )
+            drawArc(
+                topLeft = Offset(x = progressBarPointerInPixel, y = canvasHeight / 2 - strokeWidthPx / 2),
+                size = Size(strokeWidthPx, strokeWidthPx),
+                color = Color.Cyan,
+                startAngle = -90f,
+                sweepAngle = 180f,
+                useCenter = true
             )
             itemLst.forEachIndexed { index, rangeItem ->
                 val endPointInPixel = (rangeItem.endPoint / 100f) * canvasWidth
