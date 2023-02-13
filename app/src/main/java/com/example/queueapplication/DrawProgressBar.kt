@@ -9,8 +9,10 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
@@ -36,6 +38,7 @@ fun DrawProgressBar() {
             val canvasWidth = size.width
             val canvasHeight = size.height
             val strokeWidthPx = density.run { strokeWidth.toPx() }
+            val pathEffect = PathEffect.dashPathEffect(floatArrayOf(canvasHeight / 19, canvasHeight / 19), 0f)
             drawLine(
                 start = Offset(x = 0f, y = canvasHeight / 2),
                 end = Offset(x = canvasWidth, y = canvasHeight / 2),
@@ -44,7 +47,6 @@ fun DrawProgressBar() {
                 cap = StrokeCap.Round,
             )
             val progressBarPointerInPixel = (progressBarPointer / 100f) * canvasWidth
-            activity.logE("progressBarPointerInPixel $progressBarPointerInPixel")
             drawLine(
                 brush = brush,
                 start = Offset(x = 0f, y = canvasHeight / 2),
@@ -59,7 +61,8 @@ fun DrawProgressBar() {
                         start = Offset(x = endPointInPixel, y = 0F),
                         end = Offset(x = endPointInPixel, y = boxSize.toPx()),
                         color = Color.Black,
-                        strokeWidth = 4.dp.toPx(),
+                        strokeWidth = 1.2.dp.toPx(),
+                        pathEffect = pathEffect
                     )
                 }
             }
