@@ -127,6 +127,7 @@ class QueueViewModel(private val application: Application) : AndroidViewModel(ap
             value: ByteArray
         ) {
             viewModelScope.launch {
+                logE("Byte Array ${value.size}")
                 bloodPressureChannel.trySend(BloodPressureMeasurement.fromBytes(value))
             }
         }
