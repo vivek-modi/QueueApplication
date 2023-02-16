@@ -18,9 +18,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.core.app.ActivityCompat
 import androidx.lifecycle.lifecycleScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.consumeAsFlow
-import kotlinx.coroutines.withContext
 
 class MainActivity : AppCompatActivity() {
 
@@ -41,7 +38,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 //        makeRequest()
-//        startWorking()
+        startWorking()
 
         setContent {
             Theme {
@@ -66,13 +63,6 @@ class MainActivity : AppCompatActivity() {
     private fun startWorking() {
         lifecycleScope.launchWhenCreated {
             viewModel.startScan()
-        }
-        lifecycleScope.launchWhenResumed {
-            viewModel.bloodPressureChannel.consumeAsFlow().collect { measurement ->
-                withContext(Dispatchers.Main) {
-                    logW("onCharacteristicChanged ->>> $measurement")
-                }
-            }
         }
     }
 
