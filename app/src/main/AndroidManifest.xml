@@ -27,7 +27,7 @@
         android:theme="@style/Theme.QueueApplication"
         tools:targetApi="31">
         <activity
-            android:name=".MainActivity"
+            android:name=".normal.MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

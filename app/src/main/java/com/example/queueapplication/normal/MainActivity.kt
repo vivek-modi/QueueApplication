@@ -1,4 +1,4 @@
-package com.example.queueapplication
+package com.example.queueapplication.normal
 
 import android.Manifest
 import android.os.Build
@@ -18,6 +18,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.core.app.ActivityCompat
 import androidx.lifecycle.lifecycleScope
+import com.example.queueapplication.DrawProgressBar
+import com.example.queueapplication.Theme
+import com.example.queueapplication.logE
 
 class MainActivity : AppCompatActivity() {
 

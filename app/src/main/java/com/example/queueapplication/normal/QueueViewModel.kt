@@ -1,4 +1,4 @@
-package com.example.queueapplication
+package com.example.queueapplication.normal
 
 import android.annotation.SuppressLint
 import android.app.Application
@@ -15,6 +15,8 @@ import android.os.ParcelUuid
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.queueapplication.BloodPressureMeasurement
+import com.example.queueapplication.logE
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
 import java.nio.charset.StandardCharsets
