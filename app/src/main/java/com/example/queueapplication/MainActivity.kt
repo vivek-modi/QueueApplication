@@ -39,7 +39,9 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 //        makeRequest()
         startWorking()
-
+        lifecycleScope.launchWhenCreated {
+            logE("recieved Data ${viewModel.bloodPressureChannel.receive()}")
+        }
         setContent {
             Theme {
                 ColumnView()
