@@ -169,7 +169,7 @@ class SharedViewModel(private val application: Application) : AndroidViewModel(a
     }
 
     private suspend fun connectGatt(): ConnectionStateChanged {
-        return eventFlowInViewModel.onSubscription {
+        val newSubscribe = eventFlowInViewModel.onSubscription {
             logE("eventFlowInViewModel connectGatt trigger")
             bluetoothGatt =
                 scanDeviceList.first().device.connectGatt(
@@ -178,12 +178,15 @@ class SharedViewModel(private val application: Application) : AndroidViewModel(a
                     watchGattCallback,
                     BluetoothDevice.TRANSPORT_LE,
                 )
-        }.firstOrNull {
+        }
+        val result = newSubscribe.firstOrNull {
             it is ConnectionStateChanged && it.status == BluetoothGatt.GATT_SUCCESS && it.newState == BluetoothProfile.STATE_CONNECTED
         } as ConnectionStateChanged? ?: ConnectionStateChanged(
             BluetoothGatt.GATT_FAILURE,
             BluetoothProfile.STATE_DISCONNECTED
         )
+
+        return result
     }
 
     private fun handleStateConnection(status: Int, newState: Int) {

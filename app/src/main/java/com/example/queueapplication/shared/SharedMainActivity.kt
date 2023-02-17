@@ -22,7 +22,9 @@ import androidx.core.app.ActivityCompat
 import androidx.lifecycle.lifecycleScope
 import com.example.queueapplication.DrawProgressBar
 import com.example.queueapplication.Theme
+import com.example.queueapplication.logE
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.withContext
 
 class SharedMainActivity : AppCompatActivity() {
@@ -45,6 +47,12 @@ class SharedMainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 //        makeRequest()
         startWorking()
+
+        lifecycleScope.launchWhenCreated {
+            viewModel.eventFlowInViewModel.collectLatest {
+                logE("Gatt Event $it")
+            }
+        }
 
         setContent {
             Theme {

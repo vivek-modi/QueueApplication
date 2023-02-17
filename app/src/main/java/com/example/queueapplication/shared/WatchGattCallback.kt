@@ -13,7 +13,7 @@ import kotlinx.coroutines.launch
 
 class WatchGattCallback : BluetoothGattCallback() {
 
-    val eventFlow = MutableSharedFlow<GattEvent>(extraBufferCapacity = 50)
+    val eventFlow = MutableSharedFlow<SharedGattEvent>(extraBufferCapacity = 50)
     private val scope: CoroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 
     override fun onConnectionStateChange(gatt: BluetoothGatt, status: Int, newState: Int) {
