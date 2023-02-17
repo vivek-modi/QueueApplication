@@ -1,4 +1,4 @@
-package com.example.queueapplication.Shared
+package com.example.queueapplication.shared
 
 import android.annotation.SuppressLint
 import android.app.Application

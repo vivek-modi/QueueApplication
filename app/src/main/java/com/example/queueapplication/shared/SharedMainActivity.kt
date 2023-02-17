@@ -1,4 +1,4 @@
-package com.example.queueapplication.Shared
+package com.example.queueapplication.shared
 
 import android.Manifest
 import android.os.Build
