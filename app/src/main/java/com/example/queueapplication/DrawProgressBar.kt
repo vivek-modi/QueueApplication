@@ -25,6 +25,8 @@ fun DrawProgressBar() {
     val brush = Brush.horizontalGradient(listOf(Color.Red, Color.Blue))
     val progressBarPointer = rangeComposition.findReadingWithPointer(142, 90).second
     val textMeasurer = rememberTextMeasurer()
+//    val rangeName = "Extremely high"
+    val rangeName = "Low"
     Canvas(
         modifier = Modifier
             .fillMaxWidth()
@@ -51,7 +53,7 @@ fun DrawProgressBar() {
         val progressBarPointerInPixel = (progressBarPointer / 100f) * canvasWidth
         val textLayoutResult: TextLayoutResult =
             textMeasurer.measure(
-                text = AnnotatedString("Extremely high"),
+                text = AnnotatedString(rangeName),
                 style = TextStyle(color = Color.Blue, fontSize = 12.sp)
             )
         val textSize = textLayoutResult.size
@@ -71,9 +73,8 @@ fun DrawProgressBar() {
 
             drawText(
                 textMeasurer = textMeasurer,
-                text = "Extremely high",
+                text = rangeName,
                 topLeft = Offset((triangleCenterX - textSize.width / 2f), 1.dp.toPx()),
-                style = TextStyle(fontSize = 12.sp)
             )
 
             drawLine(
