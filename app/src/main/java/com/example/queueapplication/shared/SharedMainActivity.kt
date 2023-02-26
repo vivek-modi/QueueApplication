@@ -79,7 +79,6 @@ class SharedMainActivity : AppCompatActivity() {
                 .fillMaxSize()
                 .background(Color.White)
                 .padding(16.dp),
-            verticalArrangement = Arrangement.Center
         ) {
             DrawProgressBar()
         }
