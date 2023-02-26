@@ -12,125 +12,19 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.*
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.graphics.drawscope.translate
+import androidx.compose.ui.text.*
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 
+@OptIn(ExperimentalTextApi::class)
 @Composable
 fun DrawProgressBar() {
     val rangeComposition = RangeComposition()
     val itemLst = rangeComposition.bpExplained
-    val boxSize = 56.dp
     val brush = Brush.horizontalGradient(listOf(Color.Red, Color.Blue))
     val progressBarPointer = rangeComposition.findReadingWithPointer(142, 90).second
-
-//    Column(
-//        Modifier
-//            .height(boxSize)
-//            .background(Color.White)
-//    ) {
-//        Spacer(modifier = Modifier.height(1.dp))
-//        Box(
-//            modifier = Modifier
-//                .height(height = 29.dp)
-//        ) {
-//            Canvas(
-//                modifier = Modifier
-//                    .fillMaxSize()
-//                    .background(Color.Red)
-//            ) {
-//                val canvasWidth = size.width
-//                val progressBarPointerInPixel = (progressBarPointer / 100f) * canvasWidth
-//                //triangle size
-//                val triangleWidth = 12.dp
-//                val triangleHeight = 9.dp
-//                val rect = Rect(
-//                    Offset.Zero,
-//                    Size(
-//                        triangleWidth.toPx(),
-//                        triangleHeight.toPx()
-//                    )
-//                )
-//                val trianglePath = Path().apply {
-//                    moveTo(rect.bottomCenter.x, rect.bottomCenter.y)
-//                    lineTo(rect.topRight.x, rect.topRight.y)
-//                    lineTo(rect.topLeft.x, rect.topLeft.y)
-//                    close()
-//                }
-//
-//                drawIntoCanvas { canvas ->
-//                    translate(progressBarPointerInPixel, 20.dp.toPx()) {
-//                        canvas.drawOutline(
-//                            outline = Outline.Generic(trianglePath),
-//                            paint = Paint().apply {
-//                                color = Color.DarkGray
-//                                pathEffect = PathEffect.cornerPathEffect(rect.maxDimension / 3)
-//                            }
-//                        )
-//                    }
-//                }
-//            }
-//
-//        }
-//        Box(
-//            modifier = Modifier
-//                .background(Color.White)
-//                .height(height = 26.dp)
-//        ) {
-//            Canvas(
-//                modifier = Modifier.fillMaxSize()
-//            ) {
-//                val strokeWidth = 8.dp
-//                val canvasWidth = size.width
-//                val canvasHeight = size.height
-//                val strokeWidthPx = density.run { strokeWidth.toPx() }
-//                val pathEffect =
-//                    PathEffect.dashPathEffect(floatArrayOf(canvasHeight / 19, canvasHeight / 19), 0f)
-//                drawLine(
-//                    start = Offset(x = 0f, y = canvasHeight / 2),
-//                    end = Offset(x = canvasWidth, y = canvasHeight / 2),
-//                    color = Color.Gray,
-//                    strokeWidth = strokeWidthPx,
-//                    cap = StrokeCap.Round,
-//                )
-//                val progressBarPointerInPixel = (progressBarPointer / 100f) * canvasWidth
-//                drawLine(
-//                    color = Color.White,
-//                    start = Offset(x = progressBarPointerInPixel, y = canvasHeight / 2),
-//                    end = Offset(x = progressBarPointerInPixel + strokeWidthPx / 2, y = canvasHeight / 2),
-//                    strokeWidth = strokeWidthPx,
-//                )
-//                drawLine(
-//                    brush = brush,
-//                    start = Offset(x = 0f, y = canvasHeight / 2),
-//                    end = Offset(x = progressBarPointerInPixel, y = canvasHeight / 2),
-//                    strokeWidth = strokeWidthPx,
-//                    cap = StrokeCap.Round,
-//                )
-//                drawArc(
-//                    topLeft = Offset(x = progressBarPointerInPixel, y = canvasHeight / 2 - strokeWidthPx / 2),
-//                    size = Size(strokeWidthPx, strokeWidthPx),
-//                    color = Color.White,
-//                    startAngle = -90f,
-//                    sweepAngle = 180f,
-//                    useCenter = true
-//                )
-//                itemLst.forEachIndexed { index, rangeItem ->
-//                    val endPointInPixel = (rangeItem.endPoint / 100f) * canvasWidth
-//                    if (index != itemLst.lastIndex) {
-//                        drawLine(
-//                            start = Offset(x = endPointInPixel, y = 0F),
-//                            end = Offset(x = endPointInPixel, y = 26.dp.toPx()),
-//                            color = Color.Black,
-//                            strokeWidth = 1.2.dp.toPx(),
-//                            pathEffect = pathEffect
-//                        )
-//                    }
-//                }
-//            }
-//        }
-//    }
-
-
+    val textMeasurer = rememberTextMeasurer()
     Canvas(
         modifier = Modifier
             .fillMaxWidth()
@@ -139,6 +33,7 @@ fun DrawProgressBar() {
     ) {
 
         //triangle size
+
         val rectSize = Size(12.dp.toPx(), 9.dp.toPx())
         val strokeWidth = 8.dp
         val canvasWidth = size.width
@@ -154,6 +49,13 @@ fun DrawProgressBar() {
             close()
         }
         val progressBarPointerInPixel = (progressBarPointer / 100f) * canvasWidth
+        val textLayoutResult: TextLayoutResult =
+            textMeasurer.measure(
+                text = AnnotatedString("Extremely high"),
+                style = TextStyle(color = Color.Blue, fontSize = 12.sp)
+            )
+        val textSize = textLayoutResult.size
+        val triangleCenterX = progressBarPointerInPixel + rectSize.width / 2
 
         drawIntoCanvas { canvas ->
 
@@ -166,6 +68,13 @@ fun DrawProgressBar() {
                     }
                 )
             }
+
+            drawText(
+                textMeasurer = textMeasurer,
+                text = "Extremely high",
+                topLeft = Offset((triangleCenterX - textSize.width / 2f), 1.dp.toPx()),
+                style = TextStyle(fontSize = 12.sp)
+            )
 
             drawLine(
                 start = Offset(x = 0f, y = (canvasHeight / 4) * 3),
